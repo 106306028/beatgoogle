@@ -3,11 +3,16 @@ import java.util.ArrayList;
 
 public class WebTree {
 	public WebNode root;
+	public WordCounter counter;
 
 	private StringBuilder sb = new StringBuilder();
 	
-	public WebTree(WebPage rootPage) {
+	public WebTree(WebPage rootPage) throws IOException {
 		this.root = new WebNode(rootPage);
+		counter = new WordCounter(rootPage.url);
+		for(String url : counter.getURLList()) {
+			this.root.addChild(new WebNode(new WebPage(url)));
+		}
 	}
 	
 	public void setPostOrderScore(ArrayList<Keyword> keywords) throws IOException {

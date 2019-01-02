@@ -9,7 +9,8 @@ import java.util.ArrayList;
 public class WordCounter {
 	private String urlStr;
 	private String content;
-	public ArrayList<String> urlList;
+	private String contentURL;
+	public ArrayList<String> urlList = new ArrayList<>();
 	
 	public WordCounter(String urlStr) {
 		this.urlStr = urlStr;
@@ -36,7 +37,6 @@ public class WordCounter {
 			content = fetchContent();
 		}
 		content = content.toUpperCase();
-		String contentURL = content.toLowerCase();
 		keyword = keyword.toUpperCase();
 		int index = 0;
 		int count = 0;
@@ -50,17 +50,30 @@ public class WordCounter {
 			
 		}
 		
-		while(index != -1){
+		
+		return count;
+	}
+	
+	public ArrayList<String> getURLList() throws IOException{
+		contentURL = fetchContent();
+		int indexHead = 0;
+		int indexTail = 0;
+		
+		while(indexHead != -1){
 			//<a href="連結網址">連結名稱</a>
-			index = content.indexOf("<a href=http:");
-			if(index != -1) {
-				count++;
-				content = content.substring(index + keyword.length());
+			indexHead = contentURL.indexOf("<a href=\"http");
+			if(indexHead != -1) {
+				indexHead += 9;
+				indexTail = contentURL.indexOf("\"", indexHead+1);
+				String url = contentURL.substring(indexHead, indexTail);
+				urlList.add(url);
+				contentURL = contentURL.substring(indexHead + url.length());
+				
 			}
 			
 		}
+		return urlList;
 		
-		return count;
 	}
 
 	
