@@ -3,28 +3,24 @@ import java.util.ArrayList;
 
 public class WebTree {
 	public WebNode root;
-	public WordCounter counter;
 
 	private StringBuilder sb = new StringBuilder();
 	
 	public WebTree(WebPage rootPage) throws IOException {
 		this.root = new WebNode(rootPage);
-		counter = new WordCounter(rootPage.url);
-		for(String url : counter.getURLList()) {
-			this.root.addChild(new WebNode(new WebPage(url)));
-		}
+		
 	}
 	
-	public void setPostOrderScore(ArrayList<Keyword> keywords) throws IOException {
-		setPostOrderScore(root, keywords);
+	public void setPostOrderScore(KeywordList keywordList) throws IOException {
+		setPostOrderScore(root, keywordList);
 	}
 	
-	private void setPostOrderScore(WebNode startNode, ArrayList<Keyword> keywords) throws IOException {
+	private void setPostOrderScore(WebNode startNode, KeywordList keywordList) throws IOException {
 		for(WebNode child : startNode.children) {
-			setPostOrderScore(child, keywords);
+			setPostOrderScore(child, keywordList);
 		}
 		
-		startNode.setNodeScore(keywords);
+		startNode.setNodeScore(keywordList);
 	}
 	
 	public void printTree() {

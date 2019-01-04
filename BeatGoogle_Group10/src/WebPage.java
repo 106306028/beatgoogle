@@ -11,16 +11,15 @@ public class WebPage {
 		this.name = name;
 		this.counter = new WordCounter(url);
 	}
-	public WebPage(String url) {
-		this.url = url;
-		this.counter = new WordCounter(url);
-	}
 	
-	public void setScore(ArrayList<Keyword> keywords) throws IOException {
+
+	
+	public void setScore(KeywordList keywordList) throws IOException {
 		this.score = 0;
+		ArrayList<Keyword> list = keywordList.list;
 
 		
-		for(Keyword k : keywords) {
+		for(Keyword k : list) {
 			this.score += counter.countKeyword(k.name) * k.weight;
 		}
 	}

@@ -12,8 +12,8 @@ public class WebNode {
 		this.children = new ArrayList<WebNode>();
 	}
 	
-	public void setNodeScore(ArrayList<Keyword> keywords) throws IOException {
-		webPage.setScore(keywords);
+	public void setNodeScore(KeywordList keywordList) throws IOException {
+		webPage.setScore(keywordList);
 		this.nodeScore = webPage.score;
 		
 		for(WebNode child : children) {
