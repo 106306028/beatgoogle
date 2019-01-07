@@ -2,13 +2,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 
-import javax.xml.bind.ValidationException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +26,7 @@ public class WordCounter {
 	
 	private String fetchContent() throws IOException {
 		URL url = new URL(this.urlStr);
-		URLConnection conn = url.openConnection();
+		HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
 		conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
 		conn.connect();
 		InputStream in = conn.getInputStream();
@@ -82,9 +80,16 @@ public class WordCounter {
 				String citeUrl = cite.attr("href");
 				citeUrl = URLDecoder.decode(citeUrl.substring(citeUrl.indexOf('=') + 1, citeUrl.indexOf('&')), "UTF-8");
 				
-				if (!citeUrl.startsWith("http")) {
+				if (!citeUrl.startsWith("https")) {
 			        continue; // Ads/news/etc.
 				}
+				
+//				int mainHead = urlStr.indexOf("//") + 2;
+//				int mainTail = urlStr.substring(mainHead).indexOf("/");
+//				String urlStrHead = urlStr.substring(mainHead, mainTail);
+//				if (citeUrl.indexOf(urlStrHead) == -1){
+//					continue;
+//				}
 				urlList.add(citeUrl);
 				nameList.add(title);
 				count++;

@@ -2,14 +2,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.xml.bind.ValidationException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,6 +21,11 @@ public class GoogleQuery {
 	public String content;
 	public ArrayList<String> urlList = new ArrayList<>();
 	public ArrayList<String> nameList = new ArrayList<>();
+	private int httpOK = HttpURLConnection.HTTP_OK;
+	private final int error504 = HttpURLConnection.HTTP_GATEWAY_TIMEOUT;
+	private final int error403 = HttpURLConnection.HTTP_FORBIDDEN;
+	private final int error500 = HttpURLConnection.HTTP_INTERNAL_ERROR;
+	private final int error404 = HttpURLConnection.HTTP_NOT_FOUND;
 	
 	public GoogleQuery(String searchKeyword) {
 		this.searchKeyword = searchKeyword;
@@ -67,14 +71,34 @@ public class GoogleQuery {
 			        continue; // Ads/news/etc.
 				}
 				
-				if (citeUrl.indexOf("ettoday") != -1) {
+				if (citeUrl.indexOf("taiwan") != -1) {
 			        continue; // Ads/news/etc.
 				}
 				
-				if (citeUrl.indexOf("ttshow") != -1) {
-			        continue; // Ads/news/etc.
+				URL url = new URL(citeUrl);
+				HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+				uc.setReadTimeout(30000);
+				uc.connect();
+				int status = uc.getResponseCode();
+				if(status != httpOK) {
+					switch(status){
+						case error504:
+							System.out.println("連線網址逾時!");
+							break;
+						case error403:
+							System.out.println("連線網址禁止!");
+							break;
+						case error500:
+							System.out.println("連線網址錯誤或不存在!");
+							break;
+						case error404:
+							System.out.println("連線網址不存在!");
+							break;
+						default:
+							System.out.println("連線網址發生未知錯誤!");	
+					}
+					continue;
 				}
-				
 				urlList.add(citeUrl);
 				nameList.add(title);
 				
